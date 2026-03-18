@@ -1,0 +1,266 @@
+/*
+  ============================================================
+  LOGIN.CSS — Styles for the Login Page
+  ============================================================
+*/
+
+/* Remove default browser spacing from every element */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+  CSS Variables — named colors and values
+  Change these once and they update everywhere on the page
+*/
+:root {
+  --maroon:       #800000;
+  --maroon-dark:  #5c0000;
+  --maroon-light: #a00000;
+  --orange:       #ee4d2d;
+}
+
+/*
+  Put the gradient on <html> so it covers the FULL scrollable page.
+  If we put it on <body>, it only covers the viewport height (100vh)
+  and shows white below when you scroll down.
+*/
+html {
+  background: url('Web design.png') center center / cover no-repeat fixed;
+}
+
+/*
+  Body uses flexbox to center the card horizontally.
+  align-items: flex-start means the card sticks to the top
+  instead of being vertically centered — this way it never
+  gets cut off when the screen is too short.
+  overflow-y: auto allows the page to scroll if needed.
+*/
+body {
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  background: transparent; /* gradient is on <html>, not body */
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(20px, 4vh, 60px) 20px;
+  position: relative;
+  overflow-y: auto;
+}
+
+/* Subtle square grid pattern overlaid on the background */
+body::before {
+  content: '';
+  position: fixed; /* fixed so it stays in place when scrolling */
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M40 40h40v40H40zm-40 0h40v40H0zm40-40h40v40H40zM0 0h40v40H0z'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/*
+  Decorative blurred circles ("blobs") behind the card
+  filter: blur() makes them soft and glowy
+  pointer-events: none so you can click through them
+*/
+.blob {
+  position: fixed; /* fixed so they stay in place when scrolling */
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.2;
+  pointer-events: none;
+}
+.blob1 { width: 500px; height: 500px; background: #ff6b4a; top: -200px; right: -100px; }
+.blob2 { width: 400px; height: 400px; background: #800000; bottom: -150px; left: -100px; }
+
+/*
+  The white card in the center
+  clamp(min, preferred, max) = responsive padding that scales with screen width
+  animation: fadeUp plays the entrance animation when the page loads
+*/
+.card {
+  background: white;
+  border-radius: 28px;
+  width: 100%;
+  max-width: 430px; /* never wider than 430px */
+  padding: clamp(28px, 6vw, 48px);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+  position: relative;
+  animation: fadeUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Card slides up and fades in when the page loads */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(40px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* ===== LOGO ===== */
+.logo           { text-align: center; margin-bottom: 32px; }
+.logo-text      { font-family: 'Sora', sans-serif; font-size: clamp(2.2rem, 6vw, 3rem); font-weight: 800; }
+.logo .pup      { color: var(--maroon); }
+.logo .mart     { color: var(--orange); }
+.logo-sub       { color: #9ca3af; font-size: 0.83rem; margin-top: 6px; }
+
+/* The "@pup.edu.ph only" pill badge */
+.logo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #fff5f3;
+  color: var(--orange);
+  border: 1px solid #fdd5cc;
+  border-radius: 50px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+h2 {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+/* ===== FORM GROUPS ===== */
+.form-group               { margin-bottom: 16px; }
+.form-group label         { display: block; font-size: 0.82rem; font-weight: 600; color: #374151; margin-bottom: 6px; }
+
+/*
+  input-wrap uses position:relative so the icon inside can be
+  positioned OVER the input using position:absolute
+*/
+.input-wrap               { position: relative; }
+.input-wrap > i {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+.input-wrap input {
+  width: 100%;
+  padding: 13px 42px 13px 42px; /* left padding makes room for the icon */
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  color: #111;
+  background: #f9fafb;
+  transition: all 0.2s; /* smooth color change when focused */
+}
+.input-wrap input:focus {
+  outline: none; /* removes default blue browser ring */
+  border-color: var(--maroon);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(128,0,0,0.08); /* soft maroon glow */
+}
+.input-wrap input::placeholder { color: #9ca3af; }
+
+/* Eye icon inside the password field — right side */
+.toggle-pw {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  z-index: 2;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 0.9rem;
+  pointer-events: auto; /* ← add this */
+}
+.toggle-pw i { pointer-events: none; } /* ← add this line */
+.toggle-pw:hover { color: #374151; }
+
+/* ===== ERROR MESSAGE BOX ===== */
+/* Hidden by default — JavaScript sets display:block when login fails */
+.error-msg {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.83rem;
+  margin-bottom: 16px;
+  display: none;
+  animation: shake 0.3s ease;
+}
+
+/* Shakes left-right to draw attention to the error */
+@keyframes shake {
+  0%,100% { transform: translateX(0);  }
+  25%      { transform: translateX(-6px); }
+  75%      { transform: translateX(6px);  }
+}
+
+/* ===== SIGN IN BUTTON ===== */
+.btn-submit {
+  width: 100%;
+  padding: 15px;
+  background: var(--maroon);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Sora', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-submit:hover  { background: var(--maroon-light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(128,0,0,0.3); }
+.btn-submit:active { transform: translateY(0); }
+
+/*
+  Loading state: when JS adds class "loading" to the button,
+  the spinner becomes visible and the label text disappears
+*/
+.btn-submit .spinner         { display: none; }
+.btn-submit.loading .spinner { display: inline-block; }
+.btn-submit.loading .btn-label { display: none; }
+
+/* Spinning circle shown while login is being checked */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== DIVIDER ===== */
+/* The "──── or ────" line */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e5e7eb;
+}
+
+/* ===== BOTTOM LINKS ===== */
+.switch       { text-align: center; font-size: 0.88rem; color: #6b7280; }
+.switch a     { color: var(--maroon); font-weight: 700; text-decoration: none; cursor: pointer; }
+.switch a:hover { text-decoration: underline; }
+
+.reset-link   { text-align: center; margin-top: 12px; }
+.reset-link a { font-size: 0.75rem; color: #9ca3af; cursor: pointer; text-decoration: underline; }

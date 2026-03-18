@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IskoMart — Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="market.css">
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" href="market.html"><span class="pup">Isko</span><span class="mart">Mart</span></a>
+    <div class="search-bar">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="Search products or people...">
+    </div>
+    <div class="desktop-nav">
+      <a class="nav-link active" id="dnHome" onclick="showView('home')"><i class="fa-solid fa-house"></i> Home</a>
+      <a class="nav-link" id="dnProfile" onclick="showView('profile')"><i class="fa-solid fa-user"></i> Profile</a>
+      <a class="nav-link" onclick="openSellModal()"><i class="fa-solid fa-plus"></i> Sell</a>
+    </div>
+    <div class="header-actions">
+      <div class="icon-btn" onclick="openNotifications()" title="Notifications">
+        <i class="fa-solid fa-bell"></i>
+        <span class="badge" id="notifBadge"></span>
+      </div>
+      <div class="icon-btn" onclick="openInbox()" title="Messages">
+        <i class="fa-solid fa-comment-dots"></i>
+        <span class="badge" id="inboxBadge"></span>
+      </div>
+      <div class="icon-btn" onclick="openCart()">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span class="badge" id="cartBadge"></span>
+      </div>
+      <div class="avatar-btn" id="headerAvatar" onclick="showView('profile')"></div>
+    </div>
+  </div>
+  <div class="pup-banner">✅ PUP Students Only — @iskolarngbayan.pup.edu.ph required to list items</div>
+</header>
+
+<!-- ===== HOME VIEW ===== -->
+<div class="view active" id="homeView">
+  <div class="main-content">
+    <div class="flash-banner">
+      <div style="font-size:clamp(1.8rem,4vw,2.4rem);">⚡</div>
+      <div>
+        <div class="flash-title">Flash Sale • Ends in <span id="flashTimer">2h 00m</span></div>
+        <div class="flash-sub">Up to 70% OFF — for PUP students only!</div>
+      </div>
+    </div>
+
+    <div class="search-tabs" id="searchTabs" style="display:none;">
+      <button class="search-tab active" id="stProducts" onclick="setSearchTab('products')">
+        <i class="fa-solid fa-box"></i> Products
+      </button>
+      <button class="search-tab" id="stPeople" onclick="setSearchTab('people')">
+        <i class="fa-solid fa-users"></i> People
+      </button>
+    </div>
+
+    <div id="peopleResults" style="display:none;"></div>
+
+    <div class="section-title">Categories</div>
+    <div class="cats-scroll" id="catsList"></div>
+
+    <div class="section-title">🔥 Trending in PUP</div>
+    <div class="product-grid" id="productGrid"></div>
+
+    <div class="empty-state" id="noResults" style="display:none;">
+      <i class="fa-solid fa-search"></i>
+      <p>No products found.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PROFILE VIEW ===== -->
+<div class="view" id="profileView">
+  <div class="profile-hero">
+    <div class="profile-hero-inner">
+      <div class="p-avatar" id="pAvatar"></div>
+      <div style="flex:1">
+        <div class="p-name" id="pName"></div>
+        <div class="p-course" id="pCourse"></div>
+        <div class="p-stats">
+          <div class="p-stat"><div class="num" id="statListings">0</div><div class="lbl">Listings</div></div>
+          <div class="p-stat"><div class="num" id="statCart">0</div><div class="lbl">In Cart</div></div>
+          <div class="p-stat"><div class="num" id="statSold">0</div><div class="lbl">Orders</div></div>
+        </div>
+      </div>
+      <button class="p-edit-btn" onclick="openEditModal()"><i class="fa-solid fa-pen"></i> Edit Profile</button>
+    </div>
+  </div>
+  <div class="profile-content">
+    <div class="profile-tabs">
+      <div class="profile-tab active" onclick="switchTab('info',this)">Account Info</div>
+      <div class="profile-tab" onclick="switchTab('listings',this)">My Listings</div>
+      <div class="profile-tab" onclick="switchTab('cart',this)">Cart Items</div>
+    </div>
+    <div class="tab-content active" id="tabInfo">
+      <div class="info-card">
+        <div class="info-row"><span class="info-label"><i class="fa-solid fa-envelope"></i> Email</span><span class="info-value" id="infoEmail"></span></div>
+        <div class="info-row"><span class="info-label"><i class="fa-solid fa-graduation-cap"></i> Course</span><span class="info-value" id="infoCourse"></span></div>
+        <div class="info-row"><span class="info-label"><i class="fa-solid fa-layer-group"></i> Section</span><span class="info-value" id="infoSection"></span></div>
+        <div class="info-row"><span class="info-label"><i class="fa-solid fa-id-badge"></i> Student ID</span><span class="info-value" id="infoStudentId"></span></div>
+        <div class="info-row"><span class="info-label"><i class="fa-solid fa-calendar"></i> Member Since</span><span class="info-value" id="infoJoined"></span></div>
+      </div>
+      <button class="btn btn-danger" style="width:100%;padding:14px;" onclick="logout()">
+        <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+      </button>
+    </div>
+    <div class="tab-content" id="tabListings">
+      <div class="product-grid" id="myListingsGrid"></div>
+      <div class="empty-state" id="noListings" style="display:none;">
+        <i class="fa-solid fa-box-open"></i><p>No listings yet.</p>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="openSellModal()"><i class="fa-solid fa-plus"></i> List an Item</button>
+      </div>
+    </div>
+    <div class="tab-content" id="tabCart">
+      <div class="product-grid" id="cartGrid"></div>
+      <div class="empty-state" id="noCartProfile" style="display:none;">
+        <i class="fa-solid fa-cart-shopping"></i><p>Your cart is empty.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BOTTOM NAV ===== -->
+<nav class="bottom-nav">
+  <div class="nav-item active" id="bnHome" onclick="showView('home')"><i class="fa-solid fa-house"></i><span>Home</span></div>
+  <div class="nav-item" onclick="focusSearch()"><i class="fa-solid fa-magnifying-glass"></i><span>Search</span></div>
+  <div class="sell-fab" onclick="openSellModal()"><i class="fa-solid fa-plus"></i></div>
+  <div class="nav-item" onclick="openCart()"><i class="fa-solid fa-cart-shopping"></i><span>Cart</span></div>
+  <div class="nav-item" id="bnProfile" onclick="showView('profile')"><i class="fa-solid fa-user"></i><span>Profile</span></div>
+</nav>
+
+<!-- ===== CART SIDEBAR ===== -->
+<div class="cart-backdrop" id="cartBackdrop" onclick="closeCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h3 style="font-family:'Sora',sans-serif;">Your Cart</h3>
+    <button class="close-btn" onclick="closeCart()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="cart-items-list" id="cartItemsList"></div>
+  <div class="cart-footer">
+    <div class="cart-total"><span>Total</span><span id="cartTotalAmt">₱0</span></div>
+    <button class="btn btn-primary" style="width:100%;padding:14px;" onclick="openCheckout()">
+      <i class="fa-solid fa-bag-shopping"></i> Checkout
+    </button>
+  </div>
+</div>
+
+<!-- ===== PRODUCT DETAIL MODAL ===== -->
+<div class="modal-overlay hidden-overlay" id="productModal" onclick="handleModalClick(event,'productModal')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="mTitle">Product</h3>
+      <button class="close-btn" onclick="closeModal('productModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <!-- Carousel container — JS replaces this with either a single img or full carousel -->
+    <div id="mCarousel"></div>
+    <div class="detail-body">
+      <div class="detail-price" id="mPrice"></div>
+      <div class="seller-box" id="mSellerBox"></div>
+      <p class="detail-desc" id="mDesc"></p>
+      <div style="margin-top:10px;" id="mCatTag"></div>
+      <div class="detail-actions" id="mActions"></div>
+      <div id="mReviews"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SELL MODAL — updated for multiple photos ===== -->
+<div class="modal-overlay hidden-overlay" id="sellModal" onclick="handleModalClick(event,'sellModal')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>List an Item</h3>
+      <button class="close-btn" onclick="closeModal('sellModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="sell-form">
+      <div class="id-notice" id="idNotice" style="display:none;">
+        <i class="fa-solid fa-id-badge"></i>
+        <span>You need a Student ID on your profile to post listings.
+          <a onclick="closeModal('sellModal');openEditModal()" style="color:var(--maroon);font-weight:700;cursor:pointer;">Add it now →</a>
+        </span>
+      </div>
+
+      <!-- Multi-photo upload -->
+      <div class="photo-upload" id="photoUpload">
+        <i class="fa-solid fa-camera-retro"></i>
+        <p>Tap to upload photos (up to 5)</p>
+        <input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhoto(event)">
+      </div>
+      <!-- Photo counter -->
+      <div id="photoCounter" style="display:none;font-size:0.78rem;font-weight:600;color:var(--muted);margin-bottom:8px;text-align:right;"></div>
+      <!-- Thumbnail grid -->
+      <div class="photo-grid" id="photoGrid"></div>
+
+      <div class="form-group"><label>Product Name *</label><input type="text" id="sellName" placeholder="What are you selling?"></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category *</label>
+          <select id="sellCat">
+            <option value="">Pick one</option>
+            <option>Books</option><option>Gadgets</option><option>Uniforms</option>
+            <option>Food</option><option>Notes</option><option>Furniture</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Condition</label>
+          <select id="sellCondition">
+            <option>Brand New</option><option>Like New</option><option>Good</option><option>Fair</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Price (₱) *</label>
+        <div class="price-input"><span>₱</span><input type="number" id="sellPrice" placeholder="0" min="1"></div>
+      </div>
+      <div class="form-group"><label>Description</label><textarea id="sellDesc" placeholder="Describe your item..."></textarea></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" style="flex:1;" onclick="closeModal('sellModal')">Cancel</button>
+        <button class="btn btn-primary" style="flex:2;" onclick="submitListing()"><i class="fa-solid fa-tag"></i> Post Listing</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EDIT PROFILE MODAL ===== -->
+<div class="modal-overlay hidden-overlay" id="editModal" onclick="handleModalClick(event,'editModal')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Edit Profile</h3>
+      <button class="close-btn" onclick="closeModal('editModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="sell-form">
+      <div class="pfp-upload-wrap">
+        <div class="pfp-circle" id="editPfpPreview" onclick="document.getElementById('pfpInput').click()">
+          <div class="pfp-overlay"><i class="fa-solid fa-camera"></i></div>
+        </div>
+        <input type="file" id="pfpInput" accept="image/*" style="display:none" onchange="handlePfp(event)">
+        <p style="font-size:0.72rem;color:var(--muted);text-align:center;margin-top:7px;">Tap to change photo</p>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>First Name</label><input type="text" id="eFirst"></div>
+        <div class="form-group"><label>Last Name</label><input type="text" id="eLast"></div>
+      </div>
+      <div class="form-group">
+        <label>Course</label>
+        <select id="eCourse">
+          <option>BSIT</option><option>BSCS</option><option>BSIS</option>
+          <option>BSCpE</option><option>BSECE</option><option>BSEE</option>
+          <option>BSCE</option><option>BSME</option><option>BSIE</option>
+          <option>BSChem</option><option>BSChE</option><option>BSBA</option>
+          <option>BSA</option><option>BSED</option><option>BSPSYCH</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Year & Section</label><input type="text" id="eSection" placeholder="e.g. 2A"></div>
+      <div class="form-group">
+        <label><i class="fa-solid fa-id-badge" style="color:var(--maroon);margin-right:4px;"></i> Student ID <span style="color:var(--orange);font-size:0.75rem;">(required to post listings)</span></label>
+        <input type="text" id="eStudentId" placeholder="e.g. 2021-12345">
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px;padding-bottom:calc(clamp(16px,3vw,26px) + env(safe-area-inset-bottom, 80px));">
+        <button class="btn btn-ghost" style="flex:1;" onclick="closeModal('editModal')">Cancel</button>
+        <button class="btn btn-primary" style="flex:2;" onclick="saveProfile()"><i class="fa-solid fa-check"></i> Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DELETE CONFIRM MODAL ===== -->
+<div class="modal-overlay hidden-overlay" id="deleteModal" onclick="handleModalClick(event,'deleteModal')">
+  <div class="modal-box confirm-box">
+    <div class="modal-header">
+      <h3>Remove Listing</h3>
+      <button class="close-btn" onclick="closeModal('deleteModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="confirm-body">
+      <p>Are you sure you want to remove this listing? This cannot be undone.</p>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" style="flex:1;" onclick="closeModal('deleteModal')">Cancel</button>
+        <button class="btn" style="flex:1;background:#dc2626;color:white;" onclick="confirmDelete()">Remove</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CHECKOUT MODAL ===== -->
+<div class="modal-overlay hidden-overlay" id="checkoutModal" onclick="handleModalClick(event,'checkoutModal')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-bag-shopping" style="color:var(--maroon);margin-right:6px;"></i> Checkout</h3>
+      <button class="close-btn" onclick="closeModal('checkoutModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="sell-form">
+      <div style="font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Order Summary</div>
+      <div class="checkout-items-list" id="checkoutItemsList"></div>
+      <div class="checkout-total-row">
+        <span>Total</span>
+        <span id="checkoutTotal" style="color:var(--orange);font-family:'Sora',sans-serif;font-weight:800;font-size:1.2rem;"></span>
+      </div>
+      <div class="pickup-card">
+        <div class="pickup-card-header"><i class="fa-solid fa-location-dot"></i><span>Pickup Location</span></div>
+        <div class="pickup-name">PUP Main Campus</div>
+        <div class="pickup-address">Anonas St., Sta. Mesa, Manila 1016</div>
+        <div class="pickup-note"><i class="fa-solid fa-circle-info"></i> Coordinate with each seller after placing your order.</div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;" onclick="closeModal('checkoutModal')">Cancel</button>
+        <button class="btn btn-primary" style="flex:2;" onclick="confirmOrder()"><i class="fa-solid fa-check"></i> Confirm Order</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ===== CHAT MODAL ===== -->
+<div class="modal-overlay hidden-overlay" id="chatModal" onclick="handleModalClick(event,'chatModal')">
+  <div class="modal-box chat-modal-box">
+    <div class="modal-header">
+      <div class="chat-product-strip" id="chatProductStrip"></div>
+      <button class="close-btn" onclick="closeModal('chatModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-loading"><i class="fa-solid fa-circle-notch fa-spin"></i> Connecting...</div>
+    </div>
+    <div class="chat-input-bar">
+      <input type="text" id="chatInput" placeholder="Type a message..." autocomplete="off"
+             onkeydown="if(event.key==='Enter')sendMessage()">
+      <button class="chat-send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== INBOX MODAL ===== -->
+<div class="modal-overlay hidden-overlay" id="inboxModal" onclick="handleModalClick(event,'inboxModal')">
+  <div class="modal-box inbox-modal-box">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-comment-dots" style="color:var(--maroon);margin-right:6px;"></i> Messages</h3>
+      <button class="close-btn" onclick="closeModal('inboxModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="inboxList" class="inbox-list">
+      <div class="chat-loading"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NOTIFICATIONS MODAL ===== -->
+<div class="modal-overlay hidden-overlay" id="notifModal" onclick="handleModalClick(event,'notifModal')">
+  <div class="modal-box notif-modal-box">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-bell" style="color:var(--maroon);margin-right:6px;"></i> Notifications</h3>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="btn btn-ghost" style="font-size:0.75rem;padding:5px 10px;" onclick="markAllNotifsRead()">Mark all read</button>
+        <button class="close-btn" onclick="closeModal('notifModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div id="notifList" class="notif-list">
+      <div class="chat-loading"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PUBLIC PROFILE MODAL ===== -->
+<div class="modal-overlay hidden-overlay" id="publicProfileModal" onclick="handleModalClick(event,'publicProfileModal')">
+  <div class="modal-box pp-modal-box">
+    <div class="modal-header">
+      <h3>Seller Profile</h3>
+      <button class="close-btn" onclick="closeModal('publicProfileModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <!-- Profile hero -->
+    <div class="pp-hero">
+      <div class="pp-avatar" id="ppAvatar"></div>
+      <div class="pp-info">
+        <div class="pp-name" id="ppName"></div>
+        <div class="pp-course" id="ppCourse"></div>
+        <div class="pp-joined" id="ppJoined"></div>
+        <div class="pp-stats">
+          <div class="pp-stat">
+            <span class="pp-stat-num" id="ppStatListings">0</span>
+            <span class="pp-stat-lbl">Listings</span>
+          </div>
+          <div class="pp-stat">
+            <span class="pp-stat-num" id="ppStatRating">—</span>
+            <span class="pp-stat-lbl">Avg Rating</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Chat button -->
+    <div style="padding: 0 18px 14px;">
+      <button class="btn btn-outline" id="ppChatBtn" style="width:100%;gap:8px;">
+        <i class="fa-solid fa-comment"></i> Chat with Seller
+      </button>
+    </div>
+    <!-- Listings -->
+    <div style="padding: 0 18px; font-size:0.78rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px;">
+      Listings
+    </div>
+    <div class="product-grid pp-listings-grid" id="ppListingsGrid"
+         style="padding: 0 18px 24px; grid-template-columns: repeat(auto-fill, minmax(min(150px,100%),1fr));"></div>
+  </div>
+</div>
+
+<!-- ===== FIREBASE ===== -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="market.js"></script>
+</body>
+</html>
