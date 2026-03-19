@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IskoMart — Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- ===== LOADING SCREEN ===== -->
+<div id="adminLoader" class="admin-loader">
+  <div class="loader-inner">
+    <div class="loader-logo"><span class="pup">Isko</span><span class="mart">Mart</span></div>
+    <div class="loader-sub">Admin Dashboard</div>
+    <div class="loader-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+  </div>
+</div>
+
+<!-- ===== MAIN LAYOUT ===== -->
+<div class="admin-layout" id="adminLayout" style="display:none;">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span class="pup">Isko</span><span class="mart">Mart</span>
+      <span class="admin-tag">Admin</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-group-label">Main</div>
+      <a class="sidebar-link active" data-section="dashboard" onclick="showSection('dashboard',this)">
+        <i class="fa-solid fa-chart-line"></i><span>Dashboard</span>
+      </a>
+      <a class="sidebar-link" data-section="users" onclick="showSection('users',this)">
+        <i class="fa-solid fa-users"></i><span>Users</span>
+        <span class="nav-badge" id="navBadgeUsers"></span>
+      </a>
+      <a class="sidebar-link" data-section="products" onclick="showSection('products',this)">
+        <i class="fa-solid fa-box"></i><span>Products</span>
+        <span class="nav-badge nav-badge-warn" id="navBadgeLowStock"></span>
+      </a>
+      <a class="sidebar-link" data-section="categories" onclick="showSection('categories',this)">
+        <i class="fa-solid fa-tags"></i><span>Categories</span>
+      </a>
+
+      <div class="nav-group-label">Transactions</div>
+      <a class="sidebar-link" data-section="orders" onclick="showSection('orders',this)">
+        <i class="fa-solid fa-bag-shopping"></i><span>Orders</span>
+        <span class="nav-badge nav-badge-red" id="navBadgePending"></span>
+      </a>
+
+      <div class="nav-group-label">Engage</div>
+      <a class="sidebar-link" data-section="messages" onclick="showSection('messages',this)">
+        <i class="fa-solid fa-bullhorn"></i><span>Announcements</span>
+      </a>
+      <a class="sidebar-link" data-section="promos" onclick="showSection('promos',this)">
+        <i class="fa-solid fa-percent"></i><span>Promotions</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="admin-user-card" id="adminUserCard">
+        <div class="admin-avatar" id="adminAvatar">A</div>
+        <div class="admin-info">
+          <div class="admin-name" id="adminName">Admin</div>
+          <div class="admin-role">Administrator</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="adminLogout()">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      <div class="topbar-right">
+        <div class="topbar-time" id="topbarTime"></div>
+      </div>
+    </div>
+
+    <!-- ===== DASHBOARD SECTION ===== -->
+    <section class="section active" id="sectionDashboard">
+      <div class="section-header">
+        <h2>Overview</h2>
+        <p>Real-time stats from your IskoMart database</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(99,102,241,0.1);color:#6366f1;">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statTotalUsers">—</div>
+            <div class="stat-label">Total Users</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(16,185,129,0.1);color:#10b981;">
+            <i class="fa-solid fa-box"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statTotalProducts">—</div>
+            <div class="stat-label">Active Listings</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(128,0,0,0.1);color:#800000;">
+            <i class="fa-solid fa-bag-shopping"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statTotalOrders">—</div>
+            <div class="stat-label">Total Orders</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(245,158,11,0.1);color:#f59e0b;">
+            <i class="fa-solid fa-clock"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statPendingOrders">—</div>
+            <div class="stat-label">Pending Orders</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="dash-card">
+          <div class="dash-card-title"><i class="fa-solid fa-list"></i> Recent Orders</div>
+          <div id="dashRecentOrders"><div class="table-empty">No orders yet.</div></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-title"><i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;"></i> Low Stock Alerts</div>
+          <div id="dashLowStock"><div class="table-empty">No low stock items.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== USERS SECTION ===== -->
+    <section class="section" id="sectionUsers">
+      <div class="section-header">
+        <h2>User Management</h2>
+        <p>View, activate, deactivate, or remove registered students</p>
+      </div>
+
+      <div class="toolbar">
+        <input type="text" class="search-input" id="userSearch" placeholder="Search by name, email, course, or ID..." oninput="filterUsers()">
+        <div class="toolbar-right">
+          <span class="count-badge" id="userCount">0 users</span>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Email</th>
+              <th>Course / Section</th>
+              <th>Student ID</th>
+              <th>Joined</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <tr><td colspan="7" class="table-empty">Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== PRODUCTS SECTION ===== -->
+    <section class="section" id="sectionProducts">
+      <div class="section-header">
+        <h2>Product Management</h2>
+        <p>Manage all listings, features, and stock levels</p>
+      </div>
+
+      <div class="toolbar">
+        <input type="text" class="search-input" id="productSearch" placeholder="Search products..." oninput="filterProducts()">
+        <div class="toolbar-right">
+          <select class="filter-select" id="productCatFilter" onchange="filterProducts()">
+            <option value="">All Categories</option>
+          </select>
+          <button class="btn-primary" onclick="openAddProductModal()">
+            <i class="fa-solid fa-plus"></i> Add Product
+          </button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Seller</th>
+              <th>Badges</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productsTableBody">
+            <tr><td colspan="7" class="table-empty">Loading products...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== CATEGORIES SECTION ===== -->
+    <section class="section" id="sectionCategories">
+      <div class="section-header">
+        <h2>Category Management</h2>
+        <p>Create, edit, or remove product categories</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-right">
+          <button class="btn-primary" onclick="openAddCatModal()">
+            <i class="fa-solid fa-plus"></i> Add Category
+          </button>
+        </div>
+      </div>
+
+      <div class="cats-grid" id="catsGrid">
+        <div class="table-empty">Loading categories...</div>
+      </div>
+    </section>
+
+    <!-- ===== ORDERS SECTION ===== -->
+    <section class="section" id="sectionOrders">
+      <div class="section-header">
+        <h2>Order Management</h2>
+        <p>Track and update order statuses in real time</p>
+      </div>
+
+      <div class="toolbar">
+        <input type="text" class="search-input" id="orderSearch" placeholder="Search by user or order ID..." oninput="filterOrders()">
+        <div class="toolbar-right">
+          <select class="filter-select" id="orderStatusFilter" onchange="filterOrders()">
+            <option value="">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="Processing">Processing</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Student</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody">
+            <tr><td colspan="7" class="table-empty">Loading orders...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== MESSAGES SECTION ===== -->
+    <section class="section" id="sectionMessages">
+      <div class="section-header">
+        <h2>Announcements</h2>
+        <p>Send a broadcast message to all users' notification feeds</p>
+      </div>
+
+      <div class="form-card">
+        <div class="form-group">
+          <label>Announcement Title</label>
+          <input type="text" id="announceTitle" placeholder="e.g. Flash Sale Alert! Site Maintenance Notice...">
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea id="announceBody" rows="4" placeholder="Write your message here..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Icon Type</label>
+          <select id="announceIcon">
+            <option value="fa-bullhorn">📢 Announcement</option>
+            <option value="fa-tag">🏷️ Sale / Promo</option>
+            <option value="fa-circle-info">ℹ️ Info</option>
+            <option value="fa-triangle-exclamation">⚠️ Warning</option>
+            <option value="fa-gift">🎁 Special Offer</option>
+          </select>
+        </div>
+        <button class="btn-primary btn-lg" onclick="sendAnnouncement()">
+          <i class="fa-solid fa-paper-plane"></i> Send to All Users
+        </button>
+        <div id="announceResult" style="margin-top:12px;"></div>
+      </div>
+
+      <div class="section-subheader">Recent Announcements</div>
+      <div id="announceHistory"><div class="table-empty">No announcements sent yet.</div></div>
+    </section>
+
+    <!-- ===== PROMOS SECTION ===== -->
+    <section class="section" id="sectionPromos">
+      <div class="section-header">
+        <h2>Promotions & Promo Codes</h2>
+        <p>Create discount codes and manage featured products</p>
+      </div>
+
+      <div class="dual-grid">
+        <!-- Promo Codes Panel -->
+        <div class="form-card">
+          <div class="form-card-title"><i class="fa-solid fa-percent"></i> Create Promo Code</div>
+          <div class="form-group">
+            <label>Code (uppercase)</label>
+            <input type="text" id="promoCode" placeholder="e.g. SAVE20" style="text-transform:uppercase;">
+          </div>
+          <div class="form-row2">
+            <div class="form-group">
+              <label>Discount</label>
+              <input type="number" id="promoDiscount" placeholder="e.g. 20" min="1" max="100">
+            </div>
+            <div class="form-group">
+              <label>Type</label>
+              <select id="promoType">
+                <option value="percent">% Percent</option>
+                <option value="fixed">₱ Fixed</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="createPromoCode()" style="width:100%;">
+            <i class="fa-solid fa-plus"></i> Create Code
+          </button>
+        </div>
+
+        <!-- Active Codes -->
+        <div class="form-card">
+          <div class="form-card-title"><i class="fa-solid fa-ticket"></i> Active Promo Codes</div>
+          <div id="promoCodesList"><div class="table-empty">No promo codes yet.</div></div>
+        </div>
+      </div>
+
+      <div class="section-subheader" style="margin-top:32px;">Featured Products</div>
+      <p style="color:#64748b;font-size:0.85rem;margin-bottom:16px;">Products marked as featured appear at the top of IskoMart's home page.</p>
+      <div class="featured-grid" id="featuredProductsGrid">
+        <div class="table-empty">Loading products...</div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===== MODALS ===== -->
+
+<!-- Add/Edit Product Modal -->
+<div class="modal-overlay hidden" id="productModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="productModalTitle">Add Product</h3>
+      <button class="close-x" onclick="closeModal('productModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editProductId">
+      <div class="form-group">
+        <label>Product Name *</label>
+        <input type="text" id="pName" placeholder="Product name">
+      </div>
+      <div class="form-row2">
+        <div class="form-group">
+          <label>Category *</label>
+          <select id="pCat">
+            <option value="">Select</option>
+            <option>Books</option><option>Gadgets</option><option>Uniforms</option>
+            <option>Food</option><option>Notes</option><option>Furniture</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Condition</label>
+          <select id="pCondition">
+            <option>Brand New</option><option>Like New</option><option>Good</option><option>Fair</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row2">
+        <div class="form-group">
+          <label>Price (₱) *</label>
+          <input type="number" id="pPrice" placeholder="0" min="1">
+        </div>
+        <div class="form-group">
+          <label>Stock</label>
+          <input type="number" id="pStock" placeholder="e.g. 10" min="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="pDesc" rows="3" placeholder="Product description..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Image URL (optional)</label>
+        <input type="text" id="pImage" placeholder="https://...">
+      </div>
+      <div class="form-check-row">
+        <label class="check-label">
+          <input type="checkbox" id="pFeatured"> Mark as Featured
+        </label>
+        <label class="check-label">
+          <input type="checkbox" id="pOnSale" onchange="toggleSalePrice()"> On Sale
+        </label>
+      </div>
+      <div class="form-group" id="salePriceGroup" style="display:none;">
+        <label>Sale Price (₱)</label>
+        <input type="number" id="pSalePrice" placeholder="0" min="1">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeModal('productModal')">Cancel</button>
+        <button class="btn-primary" onclick="saveProduct()"><i class="fa-solid fa-check"></i> Save Product</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Category Modal -->
+<div class="modal-overlay hidden" id="catModal">
+  <div class="modal-box modal-sm">
+    <div class="modal-head">
+      <h3 id="catModalTitle">Add Category</h3>
+      <button class="close-x" onclick="closeModal('catModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editCatId">
+      <div class="form-group">
+        <label>Category Name *</label>
+        <input type="text" id="catName" placeholder="e.g. Supplies">
+      </div>
+      <div class="form-group">
+        <label>Icon (Font Awesome class)</label>
+        <input type="text" id="catIcon" placeholder="e.g. fa-book">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeModal('catModal')">Cancel</button>
+        <button class="btn-primary" onclick="saveCat()"><i class="fa-solid fa-check"></i> Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Order Detail Modal -->
+<div class="modal-overlay hidden" id="orderModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Order Details</h3>
+      <button class="close-x" onclick="closeModal('orderModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="orderDetailBody">
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div class="modal-overlay hidden" id="confirmModal">
+  <div class="modal-box modal-sm">
+    <div class="modal-head">
+      <h3>Confirm Delete</h3>
+      <button class="close-x" onclick="closeModal('confirmModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <p id="confirmMsg" style="margin-bottom:20px;color:#475569;">This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeModal('confirmModal')">Cancel</button>
+        <button class="btn-danger" id="confirmActionBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="adminToast"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
